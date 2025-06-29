@@ -47,6 +47,7 @@ const data = {
   navMain: [
     {
       app: "admin",
+      icon: SquareTerminal,
       sections: [
         {
           title: "Management",
@@ -131,15 +132,23 @@ const data = {
   ],
 }
 
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const currentApp = useAppSelector((s) => s.currentApp)
-  const appNav = data.navMain.find(item => item.app === currentApp)
-  const filteredSections = appNav?.sections || []
 
+  const appNav = data.navMain.find((nav) => nav.app === currentApp)
 
-  const filteredNavMain = data.navMain.filter(item => {
-    return currentApp === "admin" ? item.title === "Admin Panel" : item.title === "Docs"
-  })
+  const navItems = appNav?.sections.map((section) => ({
+    title: section.title,
+    url: "#", // or a meaningful section route if needed
+    icon: section.items[0]?.icon ?? SquareTerminal, // pick first item’s icon or fallback
+    isActive: false,
+    items: section.items.map((item) => ({
+      title: item.title,
+      url: item.url,
+    })),
+  })) || []
+
 
   const filteredProjects = currentApp === "admin" ? data.projects : []
 
@@ -149,19 +158,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        {filteredSections.map((section, i) => (
-          <div key={i} className="mb-4">
-            <h4 className="">
-              {section.title}
-            </h4>
-            {section.items.map((item, j) => (
-              <NavMain
-                key={j}
-                items={[{ ...item, isActive: location.pathname.startsWith(item.url) }]}
-              />
-            ))}
-          </div>
-        ))}
+        <NavMain items={navItems} />
+        <NavProjects projects={filteredProjects} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
