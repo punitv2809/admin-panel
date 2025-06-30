@@ -1,7 +1,7 @@
 "use client"
 
 import { useForm } from "react-hook-form"
-import { z } from "zod"
+import { set, z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
 
@@ -179,6 +179,14 @@ export default function SetupForm({ defaultValues, onClose, editIndex }: SetupFo
     }
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        setConnectionLoading({
+            authorization: true,
+            authorizationError: false,
+            authorizationErrorMessage: "",
+            ping: false,
+            pingError: false,
+            pingErrorMessage: ""
+        })
         try {
             if (editIndex != null) {
                 updateServer(editIndex, values)
@@ -205,6 +213,14 @@ export default function SetupForm({ defaultValues, onClose, editIndex }: SetupFo
                             pingError: pingResult.error ? true : false,
                             pingErrorMessage: pingResult.error || ""
                         })
+                        const newValues = {
+                            ...values,
+                            inUse: values.inUse ?? false,
+                            authorization: values.authorization ?? ""
+                        }
+                        addServer(newValues)
+                        toast("Saved successfully")
+                        onClose?.()
                     } else {
                         setConnectionLoading({
                             authorization: false,
@@ -225,16 +241,6 @@ export default function SetupForm({ defaultValues, onClose, editIndex }: SetupFo
                         pingErrorMessage: ""
                     })
                 }
-            }
-            if (editIndex == null) {
-                const newValues = {
-                    ...values,
-                    inUse: values.inUse ?? false,
-                    authorization: values.authorization ?? ""
-                }
-                addServer(newValues)
-                toast("Saved successfully")
-                onClose?.()
             }
         } catch (error) {
             toast.error("Failed to save")
