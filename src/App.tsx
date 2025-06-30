@@ -7,6 +7,8 @@ import {
 import Login from './components/ui/Main/Login';
 import Settings from './components/ui/Apps/Admin/Settings';
 import Setup from './components/ui/Apps/Admin/Setup';
+import List from './components/ui/Apps/Admin/Channel/List';
+import AppsList from './components/ui/Apps/Admin/Apps/List';
 
 const routes = createBrowserRouter([
   {
@@ -29,6 +31,14 @@ const routes = createBrowserRouter([
       {
         path: "admin/settings/setup",
         element: <Setup />,
+      },
+      {
+        path: "admin/channels",
+        element: <List />,
+      },
+      {
+        path: "admin/apps",
+        element: <AppsList />,
       },
     ],
   },

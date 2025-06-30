@@ -10,6 +10,15 @@ import {
   PieChart,
   Settings2,
   SquareTerminal,
+  Store,
+  Users,
+  Shield,
+  Database,
+  FileText,
+  HelpCircle,
+  Code,
+  Plus,
+  List,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -24,13 +33,9 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { useAppSelector } from "./ui/stores/app.selectors"
+import { useAdminAppStore } from "./ui/stores/admin.app.store"
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   teams: [
     {
       name: "Admin Panel",
@@ -51,6 +56,7 @@ const data = {
       sections: [
         {
           title: "Management",
+          icon: Shield,
           items: [
             {
               title: "Dashboard",
@@ -60,27 +66,82 @@ const data = {
             {
               title: "Users",
               url: "/app/admin/users",
-              icon: Bot,
+              icon: Users,
+            },
+            {
+              title: "Analytics",
+              url: "/app/admin/analytics",
+              icon: PieChart,
             },
           ],
         },
         {
+          title: "Channels",
+          icon: Store,
+          items: [
+            {
+              title: "List",
+              url: "/app/admin/channels",
+              icon: List,
+            },
+            {
+              title: "Create",
+              url: "/app/admin/channels/create",
+              icon: Plus,
+            }
+          ]
+        },
+        {
+          title: "Apps",
+          icon: Code,
+          items: [
+            {
+              title: "List",
+              url: "/app/admin/apps",
+              icon: List,
+            },
+            {
+              title: "Create",
+              url: "/app/admin/apps/create",
+              icon: Plus,
+            }
+          ]
+        },
+        {
           title: "System",
+          icon: Settings2,
           items: [
             {
               title: "Settings",
               url: "/app/admin/settings",
               icon: Settings2,
             },
+            {
+              title: "Database",
+              url: "/app/admin/database",
+              icon: Database,
+            },
+            {
+              title: "Logs",
+              url: "/app/admin/logs",
+              icon: FileText,
+            },
           ],
+        },
+        {
+          title: "Support",
+          icon: HelpCircle,
+          url: "/app/admin/support",
         },
       ],
     },
     {
       app: "docs",
+      icon: BookOpen,
       sections: [
         {
           title: "Guides",
+          icon: BookOpen,
           items: [
             {
               title: "Introduction",
@@ -96,6 +157,7 @@ const data = {
         },
         {
           title: "Resources",
+          icon: FileText,
           items: [
             {
               title: "Tutorials",
@@ -105,14 +167,18 @@ const data = {
             {
               title: "Changelog",
               url: "/app/docs/changelog",
-              icon: BookOpen,
+              icon: FileText,
             },
           ],
         },
+        {
+          title: "API Reference",
+          icon: Code,
+          url: "/app/docs/api",
+        },
       ],
     },
-  ]
-  ,
+  ],
   projects: [
     {
       name: "Design Engineering",
@@ -132,23 +198,23 @@ const data = {
   ],
 }
 
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const currentApp = useAppSelector((s) => s.currentApp)
-
+  const user = useAdminAppStore((s) => s.user)
   const appNav = data.navMain.find((nav) => nav.app === currentApp)
 
   const navItems = appNav?.sections.map((section) => ({
     title: section.title,
-    url: "#", // or a meaningful section route if needed
-    icon: section.items[0]?.icon ?? SquareTerminal, // pick first item’s icon or fallback
+    url: section.url || "#",
+    icon: section.icon,
     isActive: false,
-    items: section.items.map((item) => ({
+    hasSubsections: !!section.items,
+    items: section.items?.map((item) => ({
       title: item.title,
       url: item.url,
-    })),
+      icon: item.icon,
+    })) || [],
   })) || []
-
 
   const filteredProjects = currentApp === "admin" ? data.projects : []
 
@@ -162,7 +228,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects projects={filteredProjects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

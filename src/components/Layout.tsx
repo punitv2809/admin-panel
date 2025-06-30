@@ -16,7 +16,7 @@ import {
 import { Outlet } from "react-router"
 import { useBreadcrumbStore } from "./ui/stores/breadcrumb"
 import React from "react"
-import { Button } from "./ui/button"
+import { Toaster } from "./ui/sonner"
 
 export default function Layout() {
     const breadcrumbItems = useBreadcrumbStore((state) => state.items)
@@ -58,6 +58,7 @@ export default function Layout() {
                 </header>
                 <div className="flex flex-1 flex-col">
                     <Outlet />
+                    <Toaster />
                 </div>
             </SidebarInset>
         </SidebarProvider>

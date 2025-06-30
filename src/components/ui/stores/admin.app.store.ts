@@ -11,6 +11,7 @@ export const backendServerSchema = z.object({
   password: z.string().min(1, "Password is required"),
   pingPath: z.string().min(1, "Ping path is required").startsWith("/", "Ping path must start with '/'"),
   inUse: z.boolean().optional(),
+  authorization: z.string().optional(),
 })
 
 // 👇 Infer the TypeScript type
@@ -25,6 +26,22 @@ type AdminAppState = {
   updateServer: (index: number, updated: Partial<BackendServer>) => void
   removeServer: (index: number) => void
   resetServers: () => void
+
+  user: User | null
+  setUser: (user: User | null) => void
+}
+
+export enum UserStatus {
+  ACTIVE = 2,
+  CONFIRMATION_PENDING = 1,
+  DEACTIVATED = 3,
+}
+
+export type User = {
+  username: string,
+  email: string,
+  confirmation: number,
+  status: UserStatus,
 }
 
 export const useAdminAppStore = create<AdminAppState>()(
@@ -57,6 +74,9 @@ export const useAdminAppStore = create<AdminAppState>()(
         }))
       },
       resetServers: () => set({ backendServers: [] }),
+
+      user: null,
+      setUser: (user) => set({ user }),
     }),
     {
       name: "admin-app-backend-servers", // localStorage key
@@ -64,5 +84,5 @@ export const useAdminAppStore = create<AdminAppState>()(
         backendServers: state.backendServers,
       }),
     }
-  )
+  ),
 )
