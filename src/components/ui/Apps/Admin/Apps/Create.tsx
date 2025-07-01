@@ -1,9 +1,7 @@
-import React from 'react'
-
 const Create = () => {
   return (
-    <div>
-      
+    <div className='p-6 grid grid-cols-12 gap-6'>
+      <p>channel create</p>
     </div>
   )
 }

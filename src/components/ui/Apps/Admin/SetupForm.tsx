@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/dialog"
 import { RefreshCcw, Terminal } from "lucide-react"
 import { useAdminAppStore } from "../../stores/admin.app.store"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Alert, AlertDescription, AlertTitle } from "../../alert"
 
 const formSchema = z.object({
@@ -99,6 +99,10 @@ export default function SetupForm({ defaultValues, onClose, editIndex }: SetupFo
             ...defaultValues,
         }
     })
+
+    // useEffect(() => {
+    //     form.reset(defaultValues)
+    // }, [])
 
     const addServer = useAdminAppStore((s) => s.addServer)
     const updateServer = useAdminAppStore((s) => s.updateServer)
